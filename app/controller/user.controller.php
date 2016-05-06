@@ -19,16 +19,66 @@ class controller_user extends controller
 
 	public function action_login()
 	{
+		help_session::start();
 		$mobile = $this->codeAnt->input->post('mobile');
 		$token = $this->codeAnt->input->post('token');
-		if (self::loginTokenCheck($mobile, $token) === true){
-			$this->codeAnt->response('2000', 'ok', 'true');
+
+		if($this->isMobileExist($mobile)===true){
+			if($this->loginTokenCheck($mobile, $token) === true){
+				help_session::set_token($mobile.$token);
+				$userinfo =  module_user::getUserInfo(array('mobile'=>$mobile));
+				if(!empty($userinfo[0])){
+					help_session::set('userinfo',$userinfo[0]);
+					$this->codeAnt->response('2000', 'ok', 'true');
+				}else{
+					$this->codeAnt->response('4000', 'error', 'user is not exist');
+				}
+			}else{
+				$this->codeAnt->response('4000', 'token error', 'fasle');
+			}
 		}else{
-			$this->codeAnt->response('4000', 'token error', 'fasle');
+			$this->codeAnt->response('4000', 'mobile is not exist', 'fasle');
 		}
 
 	}
 
+	public function action_self()
+	{
+		$this->sessionCheck();
+		$userinfo = help_session::get('userinfo');
+		
+		$this->codeAnt->response('2000', 'ok', $userinfo);
+		
+	}
+
+	public function action_self_modify()
+	{
+		$this->sessionCheck();
+		$modify_info = array();
+  		$modify_info['email'] = $this->codeant->input->post("email");
+  		$modify_info['id_number'] = $this->codeAnt->input->post("id_number");
+  		$modify_info['avatar'] = $this->codeAnt->input->post("avatar");
+  		$modify_info['nickname'] = $this->codeAnt->input->post("nickname");
+  		$modify_info['mood'] = $this->codeAnt->input->post("mood");
+  		$modify_info['gender'] = $this->codeAnt->input->post("gender");
+
+		$userinfo = help_session::get('userinfo');
+		$where['mobile'] = $userinfo['mobile'];
+		module_user::modifyUser($modify_info, $where);
+		$this->updateSessionInfo();
+		$this->codeAnt->response('2000', 'ok', true);
+		
+	}
+
+	private function isMobileExist($mobile)
+	{
+		$user_info = dao_user::getBy(array('mobile'=>$mobile));
+		if(!empty($user_info)){
+			return true;
+		}else{
+			return false;
+		}
+	}
 
 	private function loginTokenCheck($mobile, $token)
 	{
@@ -39,5 +89,30 @@ class controller_user extends controller
 			return true;
 		}
 	}
+
+	private function sessionCheck()
+	{
+		help_session::start();
+		$userinfo = help_session::get('userinfo');
+		var_dump($userinfo);
+		if(!empty($userinfo['mobile'])){
+			return true;
+		}else{
+			$this->codeAnt->response('4003', 'login first', 'fasle');
+			die();
+		}
+	}
+
+	private function updateSessionInfo()
+	{
+		$old_info = help_session::get('userinfo');
+		$new_info = module_user::getUserInfo(array('mobile'=>$old_info['mobile']));
+		if(!empty($new_info[0])){
+			help_session::set('userinfo', $new_info[0]);
+		}else{
+			$this->codeAnt->log->warning("update session error!!!");
+		}
+	}
+
 }
 ?>

@@ -1,7 +1,7 @@
 <?php
-class dao_user extends dao
+class dao_group_member extends dao
 {
-    static private $table = 'user';
+    static private $table = 'group_member';
 
 	static public function getBy($wp)
     {

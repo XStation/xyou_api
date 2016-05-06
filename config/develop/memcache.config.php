@@ -8,7 +8,7 @@ $temp_config = serialize(array(
 	//array('10.100.120.210', 11411),
 ));
 define('_MEMCACHE_HOST',$temp_config);
-define('_MEMCACHE_EXPIRE', 0);					//默认期限为一小时
+define('_MEMCACHE_EXPIRE', 3600);					//默认期限为一小时
 define('_CACHE_ENABLE',true);						//是否使用缓存
 define('_MEMCACHE_AUTO_COMPRESS',false);			//是否开启memcache的自动压缩,默认关闭
 if(_MEMCACHE_AUTO_COMPRESS){

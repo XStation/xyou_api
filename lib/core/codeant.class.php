@@ -91,6 +91,7 @@ class codeant
         $new_uri_array  = array();
         $binding        = array();
         foreach($map as $k => $v){
+			//echo $k, "===============", json_encode($v), "\r\n";
             if(preg_match($k, $uri, $binding) === 1){ //because preg_match return 0 or 1 as nomatch or match , error as false
                 $new_uri_array = $v;
                 $this->binding = $binding;

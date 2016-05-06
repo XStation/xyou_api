@@ -33,6 +33,7 @@ define('_CONFIG_ROOT', _ROOT.'config/'._APP_ENV.'/');
 //require_once(_ROOT.'config/config.php');
 require_once(_CONFIG_ROOT.'core.config.php');
 require_once(_CONFIG_ROOT.'app.config.php');
+require_once(_CONFIG_ROOT.'session.config.php');
 require_once(_CONFIG_ROOT.'db.config.php');
 require_once(_CONFIG_ROOT.'memcache.config.php');
 require_once(_CONFIG_ROOT.'smarty.config.php');
